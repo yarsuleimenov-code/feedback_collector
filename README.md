@@ -37,10 +37,16 @@ FEEDBACK_TO_EMAIL=a@zaberman.com
 
 Deploy to Vercel with `npm run build`; `vercel.json` routes `/review` and `/review/feedback` to the SPA while preserving `/api/feedback`.
 
+## GitHub Pages preview
+
+Pushes to `main` are built and published by `.github/workflows/deploy-pages.yml`.
+The Pages build uses `/feedback_collector/` as the asset base and hash routing so refreshes work on static hosting.
+
+GitHub Pages hosts only the frontend preview. It cannot run `api/feedback.ts`; use Vercel or another serverless host for real email delivery.
+
 ## Verification
 
 ```bash
 npm run build
 npm run typecheck
 ```
-
