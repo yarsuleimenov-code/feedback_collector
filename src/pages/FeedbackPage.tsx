@@ -7,6 +7,7 @@ const GOOGLE_REVIEW_URL =
   "https://search.google.com/local/writereview?placeid=ChIJ5eFmKdxWwqcRtZUk-KprhcU";
 const MIN_COMMENT_LENGTH = 10;
 const MAX_COMMENT_LENGTH = 2000;
+const MAX_CONTACT_LENGTH = 254;
 
 type Props = {
   onBack: () => void;
@@ -14,7 +15,14 @@ type Props = {
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
 
-async function submitFeedback(payload: { rating: number | null; comments: string; website: string }) {
+function isValidContact(value: string) {
+  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  const phoneDigits = value.replace(/\D/g, "");
+  const isPhone = /^[+()\d\s.-]+$/.test(value) && phoneDigits.length >= 7 && phoneDigits.length <= 15;
+  return isEmail || isPhone;
+}
+
+async function submitFeedback(payload: { rating: number | null; comments: string; contact: string; website: string }) {
   if (import.meta.env.DEV && import.meta.env.VITE_USE_REAL_API !== "true") {
     return;
   }
@@ -36,10 +44,14 @@ async function submitFeedback(payload: { rating: number | null; comments: string
 export function FeedbackPage({ onBack }: Props) {
   const [rating, setRating] = useState<number | null>(null);
   const [comments, setComments] = useState("");
+  const [contact, setContact] = useState("");
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<SubmissionState>("idle");
   const trimmedComments = comments.trim();
-  const isValid = trimmedComments.length >= MIN_COMMENT_LENGTH && trimmedComments.length <= MAX_COMMENT_LENGTH;
+  const trimmedContact = contact.trim();
+  const areCommentsValid = trimmedComments.length >= MIN_COMMENT_LENGTH && trimmedComments.length <= MAX_COMMENT_LENGTH;
+  const isContactValid = isValidContact(trimmedContact);
+  const isValid = areCommentsValid && isContactValid;
 
   useEffect(() => track("feedback_page_view"), []);
 
@@ -49,7 +61,7 @@ export function FeedbackPage({ onBack }: Props) {
 
     setStatus("submitting");
     try {
-      await submitFeedback({ rating, comments: trimmedComments, website });
+      await submitFeedback({ rating, comments: trimmedComments, contact: trimmedContact, website });
       setStatus("success");
       track("feedback_submit_success");
     } catch {
@@ -144,8 +156,8 @@ export function FeedbackPage({ onBack }: Props) {
             rows={6}
             required
             placeholder="Tell us what happened or how we can improve."
-            aria-describedby="comments-help comments-error"
-            aria-invalid={comments.length > 0 && !isValid}
+            aria-describedby="comments-help form-error"
+            aria-invalid={comments.length > 0 && !areCommentsValid}
             onChange={(event) => {
               setComments(event.target.value);
               if (status === "error") setStatus("idle");
@@ -154,6 +166,29 @@ export function FeedbackPage({ onBack }: Props) {
           <div className="field-meta">
             <span id="comments-help">{MIN_COMMENT_LENGTH}–{MAX_COMMENT_LENGTH.toLocaleString()} characters</span>
             <span>{comments.length}/{MAX_COMMENT_LENGTH.toLocaleString()}</span>
+          </div>
+
+          <label className="field-label field-label--contact" htmlFor="contact">
+            Email or phone
+          </label>
+          <input
+            className="contact-input"
+            id="contact"
+            name="contact"
+            type="text"
+            value={contact}
+            maxLength={MAX_CONTACT_LENGTH}
+            required
+            placeholder="name@example.com or +1 412 555 0123"
+            aria-describedby="contact-help form-error"
+            aria-invalid={contact.length > 0 && !isContactValid}
+            onChange={(event) => {
+              setContact(event.target.value);
+              if (status === "error") setStatus("idle");
+            }}
+          />
+          <div id="contact-help" className="field-help">
+            Required so the Zaberman team can follow up with you.
           </div>
           <input
             className="honeypot"
@@ -166,9 +201,11 @@ export function FeedbackPage({ onBack }: Props) {
             aria-hidden="true"
           />
 
-          <div id="comments-error" className="form-message" aria-live="polite">
+          <div id="form-error" className="form-message" aria-live="polite">
             {comments.length > 0 && trimmedComments.length < MIN_COMMENT_LENGTH
               ? `Please enter at least ${MIN_COMMENT_LENGTH} characters.`
+              : contact.length > 0 && !isContactValid
+                ? "Enter a valid email address or phone number."
               : status === "error"
                 ? "We could not send your feedback. Please try again."
                 : ""}
@@ -201,7 +238,7 @@ function PrivacyNote() {
   return (
     <p className="privacy-note">
       <LockIcon />
-      Your feedback is sent privately to the Zaberman team.
+      Your feedback and contact details are sent privately to the Zaberman team for follow-up.
     </p>
   );
 }

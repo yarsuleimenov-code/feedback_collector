@@ -1,6 +1,7 @@
 type FeedbackPayload = {
   rating?: number | null;
   comments?: string;
+  contact?: string;
   website?: string;
 };
 
@@ -11,6 +12,14 @@ const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 5;
 const MIN_COMMENT_LENGTH = 10;
 const MAX_COMMENT_LENGTH = 2000;
+const MAX_CONTACT_LENGTH = 254;
+
+function isValidContact(value: string) {
+  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  const phoneDigits = value.replace(/\D/g, "");
+  const isPhone = /^[+()\d\s.-]+$/.test(value) && phoneDigits.length >= 7 && phoneDigits.length <= 15;
+  return value.length <= MAX_CONTACT_LENGTH && (isEmail || isPhone);
+}
 
 function sendJson(response: any, status: number, body: Record<string, unknown>) {
   response.status(status).setHeader("Content-Type", "application/json").send(JSON.stringify(body));
@@ -59,6 +68,7 @@ export default async function handler(request: any, response: any) {
   }
 
   const comments = typeof payload.comments === "string" ? payload.comments.trim() : "";
+  const contact = typeof payload.contact === "string" ? payload.contact.trim() : "";
   const rating = payload.rating === null || payload.rating === undefined ? null : Number(payload.rating);
 
   if (comments.length < MIN_COMMENT_LENGTH || comments.length > MAX_COMMENT_LENGTH) {
@@ -67,6 +77,10 @@ export default async function handler(request: any, response: any) {
 
   if (rating !== null && (!Number.isInteger(rating) || rating < 1 || rating > 5)) {
     return sendJson(response, 400, { error: "Rating must be an integer from 1 to 5" });
+  }
+
+  if (!isValidContact(contact)) {
+    return sendJson(response, 400, { error: "A valid email address or phone number is required" });
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -79,6 +93,7 @@ export default async function handler(request: any, response: any) {
 
   const requestId = crypto.randomUUID();
   const safeComments = escapeHtml(comments).replaceAll("\n", "<br />");
+  const safeContact = escapeHtml(contact);
   const deliveryResponse = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -90,8 +105,8 @@ export default async function handler(request: any, response: any) {
       from,
       to: [to],
       subject: "New website feedback",
-      html: `<h2>New website feedback</h2><p><strong>Rating:</strong> ${rating ?? "Not provided"}</p><p><strong>Comments:</strong><br />${safeComments}</p><p><strong>Request ID:</strong> ${requestId}</p>`,
-      text: `New website feedback\n\nRating: ${rating ?? "Not provided"}\n\nComments:\n${comments}\n\nRequest ID: ${requestId}`,
+      html: `<h2>New website feedback</h2><p><strong>Contact:</strong> ${safeContact}</p><p><strong>Rating:</strong> ${rating ?? "Not provided"}</p><p><strong>Comments:</strong><br />${safeComments}</p><p><strong>Request ID:</strong> ${requestId}</p>`,
+      text: `New website feedback\n\nContact: ${contact}\n\nRating: ${rating ?? "Not provided"}\n\nComments:\n${comments}\n\nRequest ID: ${requestId}`,
     }),
   });
 
@@ -101,4 +116,3 @@ export default async function handler(request: any, response: any) {
 
   return sendJson(response, 201, { ok: true, requestId });
 }
-

@@ -33,6 +33,7 @@ body {
 }
 
 button,
+input,
 textarea {
   font: inherit;
 }
@@ -44,6 +45,7 @@ a {
 
 button:focus-visible,
 a:focus-visible,
+input:focus-visible,
 textarea:focus-visible {
   outline: 3px solid rgba(37, 99, 235, 0.28);
   outline-offset: 3px;
@@ -367,6 +369,41 @@ button.choice-panel {
 
 .field-label {
   margin-bottom: 9px;
+}
+
+.field-label--contact {
+  margin-top: 22px;
+}
+
+.contact-input {
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 16px;
+  border: 1px solid #bdc8d8;
+  border-radius: 10px;
+  color: var(--navy);
+  background: #ffffff;
+  font-size: 16px;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.contact-input::placeholder {
+  color: #7e8ca1;
+}
+
+.contact-input:hover {
+  border-color: #91a0b5;
+}
+
+.contact-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.11);
+}
+
+.field-help {
+  margin-top: 7px;
+  color: var(--text-muted);
+  font-size: 13px;
 }
 
 textarea {

@@ -7,7 +7,7 @@ The first screen offers two equal choices:
 - leave a public Google review;
 - send private feedback to the Zaberman team.
 
-Private feedback is never published and analytics receive event names only—never the rating or comment text.
+Private feedback is never published. A valid email address or phone number is required for follow-up, and analytics receive event names only—never the contact details, rating, or comment text.
 
 ## Local development
 
