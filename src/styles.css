@@ -83,28 +83,12 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  font-size: 32px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--navy);
 }
 
-.brand__mark {
-  display: grid;
-  gap: 3px;
-  transform: skewX(-30deg);
-}
-
-.brand__mark span {
+.brand__image {
   display: block;
-  width: 22px;
-  height: 5px;
-  background: var(--green);
-}
-
-.brand__mark span:last-child {
-  width: 15px;
+  width: 240px;
+  height: auto;
 }
 
 .page-heading {
@@ -267,8 +251,8 @@ button.choice-panel {
   align-items: center;
 }
 
-.form-topbar .brand {
-  font-size: 30px;
+.form-topbar .brand__image {
+  width: 190px;
 }
 
 .back-button {
@@ -577,8 +561,8 @@ textarea:focus {
     padding: 28px 20px 24px;
   }
 
-  .brand {
-    font-size: 27px;
+  .brand__image {
+    width: 200px;
   }
 
   .page-heading {
@@ -616,8 +600,8 @@ textarea:focus {
     grid-template-columns: 1fr auto 1fr;
   }
 
-  .form-topbar .brand {
-    font-size: 23px;
+  .form-topbar .brand__image {
+    width: 150px;
   }
 
   .back-button {
@@ -669,4 +653,3 @@ textarea:focus {
     animation-iteration-count: 1 !important;
   }
 }
-
