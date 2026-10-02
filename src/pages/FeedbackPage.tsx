@@ -215,17 +215,15 @@ export function FeedbackPage({ onBack }: Props) {
             {status === "submitting" ? "Sending…" : "Send feedback"}
           </button>
 
-          <div className="alternative-action">
-            <span>or</span>
+          <p className="alternative-link">
+            You can also{" "}
             <a
-              className="button button--secondary"
               href={GOOGLE_REVIEW_URL}
               onClick={() => track("feedback_google_click")}
             >
-              <GoogleIcon />
-              Prefer to share publicly? Leave a review on Google
+              share your review on Google.
             </a>
-          </div>
+          </p>
 
           <PrivacyNote />
         </form>
