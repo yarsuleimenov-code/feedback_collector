@@ -80,7 +80,7 @@ export function FeedbackPage({ onBack }: Props) {
           </div>
           <header className="page-heading page-heading--success">
             <h1 id="success-heading">Thank you</h1>
-            <p>Your feedback has been sent to the Zaberman team.</p>
+            <p>Your message has been sent to Zaberman&apos;s CEO.</p>
           </header>
           <div className="success-actions">
             <button className="button button--primary" type="button" onClick={onBack}>
@@ -114,8 +114,8 @@ export function FeedbackPage({ onBack }: Props) {
         </div>
 
         <header className="page-heading page-heading--form">
-          <h1 id="feedback-heading">Send private feedback</h1>
-          <p>Tell us what happened or how we can improve. Your message goes directly to the Zaberman team and is not published.</p>
+          <h1 id="feedback-heading">Message the CEO</h1>
+          <p>Your message is private and is not published.</p>
         </header>
 
         <form className="feedback-form" onSubmit={handleSubmit} noValidate>
@@ -188,7 +188,7 @@ export function FeedbackPage({ onBack }: Props) {
             }}
           />
           <div id="contact-help" className="field-help">
-            Required so the Zaberman team can follow up with you.
+            Required for a reply.
           </div>
           <input
             className="honeypot"
@@ -236,7 +236,7 @@ function PrivacyNote() {
   return (
     <p className="privacy-note">
       <LockIcon />
-      Your feedback and contact details are sent privately to the Zaberman team for follow-up.
+      Sent privately to Zaberman&apos;s CEO.
     </p>
   );
 }

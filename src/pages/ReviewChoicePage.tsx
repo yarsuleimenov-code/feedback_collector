@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Brand } from "../components/Brand";
-import { ArrowIcon, GoogleIcon, MailIcon, PinIcon } from "../components/Icons";
+import { ArrowIcon, GoogleIcon, MailIcon } from "../components/Icons";
 import { track } from "../lib/analytics";
 
 const GOOGLE_REVIEW_URL =
@@ -19,7 +19,6 @@ export function ReviewChoicePage({ onPrivateFeedback }: Props) {
         <Brand />
         <header className="page-heading">
           <h1 id="review-heading">How would you like to share your experience?</h1>
-          <p>Your feedback helps us improve and helps other customers make informed decisions.</p>
         </header>
 
         <div className="choice-grid">
@@ -50,25 +49,13 @@ export function ReviewChoicePage({ onPrivateFeedback }: Props) {
               <MailIcon />
             </span>
             <span className="choice-panel__title">
-              Send private feedback
+              Message the CEO
               <ArrowIcon />
             </span>
-            <span className="choice-panel__copy">Tell the Zaberman team directly</span>
+            <span className="choice-panel__copy">Private and direct</span>
           </button>
         </div>
-
-        <div className="location-band">
-          <PinIcon />
-          <span className="location-band__divider" aria-hidden="true" />
-          <span>
-            <strong>Zaberman</strong>
-            <span>3202 McKnight E Dr #169, Pittsburgh, PA 15237</span>
-          </span>
-        </div>
-
-        <footer className="app-footer">Thank you for choosing Zaberman.</footer>
       </section>
     </main>
   );
 }
-
